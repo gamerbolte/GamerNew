@@ -249,7 +249,7 @@ export default function ProductPage() {
       </main>
 
       <Dialog open={isOrderDialogOpen} onOpenChange={handleCloseDialog}>
-        <DialogContent className="bg-card border-white/10 text-white max-w-md mx-4 max-h-[90vh] overflow-y-auto">
+        <DialogContent className="bg-card border-white/10 text-white max-w-md max-h-[90vh] overflow-y-auto sm:mx-auto">
           <DialogHeader><DialogTitle className="font-heading text-xl uppercase">{orderStep === 'form' && 'Place Your Order'}{orderStep === 'payment' && 'Complete Payment'}</DialogTitle></DialogHeader>
 
           {orderStep === 'form' && (
