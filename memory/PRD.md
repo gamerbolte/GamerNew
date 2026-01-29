@@ -123,6 +123,12 @@ GameShop Nepal is a premium e-commerce platform for selling digital products in 
   - `/app/backend/.env`: Added TAKEAPP_API_KEY
   - `/app/backend/server.py`: Fixed payload to handle optional email correctly
 
+### UI Fixes (Jan 29, 2025)
+- **Dialogs Centered**: Removed `mx-4` class causing dialogs to shift right (9 files updated)
+- **Duplicate Email Removed**: Removed custom "Email Address" field from Netflix Premium product that duplicated the built-in email field
+- **"Made with Emergent" Badge Removed**: Cleaned up index.html
+- **Lint Fixes**: Fixed unescaped quotes in FAQPage.jsx and ReviewCard.jsx
+
 ## Next Tasks
 1. Set up scheduled auto-sync for Trustpilot reviews (every 6 hours)
 2. Add sample products to showcase the store
