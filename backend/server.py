@@ -302,10 +302,27 @@ async def reorder_products(order_data: ProductOrderUpdate, current_user: dict = 
 
 @api_router.get("/products/{product_id}", response_model=Product)
 async def get_product(product_id: str):
-    product = await db.products.find_one({"id": product_id}, {"_id": 0})
+    # First try to find by slug
+    product = await db.products.find_one({"slug": product_id}, {"_id": 0})
+    if not product:
+        # Then try by ID
+        product = await db.products.find_one({"id": product_id}, {"_id": 0})
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
     return product
+
+def generate_slug(name: str) -> str:
+    """Generate a URL-friendly slug from product name"""
+    import re
+    # Convert to lowercase
+    slug = name.lower()
+    # Replace spaces and special characters with hyphens
+    slug = re.sub(r'[^a-z0-9]+', '-', slug)
+    # Remove leading/trailing hyphens
+    slug = slug.strip('-')
+    # Remove multiple consecutive hyphens
+    slug = re.sub(r'-+', '-', slug)
+    return slug
 
 @api_router.post("/products", response_model=Product)
 async def create_product(product_data: ProductCreate, current_user: dict = Depends(get_current_user)):
