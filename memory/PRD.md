@@ -70,8 +70,12 @@ GameShop Nepal is a premium e-commerce platform for selling digital products in 
 ### P0 - Critical (Done)
 - [x] Core product listing and ordering flow
 - [x] Admin product management
-- [x] Take.app order integration
+- [x] Take.app order integration (with WhatsApp fallback when API key not configured)
 - [x] Trustpilot review auto-sync
+- [x] **Order placement bug fix** (Jan 29, 2025) - Fixed Take.app API key requirement, added WhatsApp fallback
+- [x] Promo codes system with admin management
+- [x] Service charge and tax settings (configurable from admin)
+- [x] Slug-based product URLs for SEO
 
 ### P1 - High Priority
 - [ ] Scheduled auto-sync (cron job to sync every 6 hours)
