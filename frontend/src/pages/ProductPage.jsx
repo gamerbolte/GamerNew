@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Check, ShoppingCart, Loader2, ExternalLink, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Check, ShoppingCart, Loader2, ExternalLink, AlertCircle, Ticket, X } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { productsAPI, ordersAPI } from '@/lib/api';
+import { productsAPI, ordersAPI, promoCodesAPI, settingsAPI } from '@/lib/api';
 
 export default function ProductPage() {
   const { productSlug } = useParams();
@@ -23,13 +23,25 @@ export default function ProductPage() {
   const [orderStep, setOrderStep] = useState('form');
   const [orderData, setOrderData] = useState(null);
   const [orderForm, setOrderForm] = useState({ customer_name: '', customer_phone: '', customer_email: '', custom_fields: {}, remark: '' });
+  
+  // Promo code state
+  const [promoCode, setPromoCode] = useState('');
+  const [promoDiscount, setPromoDiscount] = useState(null);
+  const [isValidatingPromo, setIsValidatingPromo] = useState(false);
+  
+  // Pricing settings
+  const [pricingSettings, setPricingSettings] = useState({ service_charge: 0, tax_percentage: 0, tax_label: 'Tax' });
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res = await productsAPI.getOne(productSlug);
-        setProduct(res.data);
-        if (res.data.variations?.length > 0) setSelectedVariation(res.data.variations[0].id);
+        const [productRes, settingsRes] = await Promise.all([
+          productsAPI.getOne(productSlug),
+          settingsAPI.get().catch(() => ({ data: { service_charge: 0, tax_percentage: 0, tax_label: 'Tax' } }))
+        ]);
+        setProduct(productRes.data);
+        setPricingSettings(settingsRes.data);
+        if (productRes.data.variations?.length > 0) setSelectedVariation(productRes.data.variations[0].id);
       } catch (error) {
         console.error('Error fetching product:', error);
       } finally {
@@ -40,6 +52,35 @@ export default function ProductPage() {
   }, [productSlug]);
 
   const currentVariation = product?.variations?.find(v => v.id === selectedVariation);
+  
+  // Calculate pricing
+  const subtotal = currentVariation?.price || 0;
+  const discountAmount = promoDiscount?.discount_amount || 0;
+  const afterDiscount = subtotal - discountAmount;
+  const serviceCharge = parseFloat(pricingSettings.service_charge) || 0;
+  const taxPercentage = parseFloat(pricingSettings.tax_percentage) || 0;
+  const taxAmount = afterDiscount * (taxPercentage / 100);
+  const total = afterDiscount + serviceCharge + taxAmount;
+
+  const handleApplyPromo = async () => {
+    if (!promoCode.trim()) return;
+    setIsValidatingPromo(true);
+    try {
+      const res = await promoCodesAPI.validate(promoCode.trim(), subtotal);
+      setPromoDiscount(res.data);
+      toast.success(`Promo code applied! You save Rs ${res.data.discount_amount}`);
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Invalid promo code');
+      setPromoDiscount(null);
+    } finally {
+      setIsValidatingPromo(false);
+    }
+  };
+
+  const handleRemovePromo = () => {
+    setPromoCode('');
+    setPromoDiscount(null);
+  };
 
   const handleSubmitOrder = async (e) => {
     e.preventDefault();
@@ -58,6 +99,9 @@ export default function ProductPage() {
           if (value) fullRemark += `${field.label}: ${value}\n`;
         });
       }
+      if (promoDiscount) {
+        fullRemark += `Promo Code: ${promoDiscount.code} (-Rs ${promoDiscount.discount_amount})\n`;
+      }
       if (orderForm.remark) fullRemark += `Notes: ${orderForm.remark}`;
 
       const orderPayload = {
@@ -65,7 +109,7 @@ export default function ProductPage() {
         customer_phone: orderForm.customer_phone,
         customer_email: orderForm.customer_email || null,
         items: [{ name: product.name, price: currentVariation.price, quantity: 1, variation: currentVariation.name }],
-        total_amount: currentVariation.price,
+        total_amount: total,
         remark: fullRemark.trim() || null
       };
 
@@ -91,6 +135,8 @@ export default function ProductPage() {
     setOrderStep('form');
     setOrderData(null);
     setOrderForm({ customer_name: '', customer_phone: '', customer_email: '', custom_fields: {}, remark: '' });
+    setPromoCode('');
+    setPromoDiscount(null);
   };
 
   if (isLoading) {
@@ -211,7 +257,6 @@ export default function ProductPage() {
               <div className="bg-black/50 rounded-lg p-3 flex items-center gap-3">
                 <img src={product.image_url} alt={product.name} className="w-12 h-12 rounded object-cover" />
                 <div className="flex-1 min-w-0"><p className="text-white font-semibold text-sm truncate">{product.name}</p><p className="text-white/60 text-xs">{currentVariation?.name}</p></div>
-                <p className="text-gold-500 font-bold">Rs {currentVariation?.price?.toLocaleString()}</p>
               </div>
 
               <div className="space-y-3">
@@ -228,6 +273,77 @@ export default function ProductPage() {
                 )}
 
                 <div><Label className="text-white/80 text-sm">Notes (optional)</Label><Textarea value={orderForm.remark} onChange={(e) => setOrderForm({...orderForm, remark: e.target.value})} className="bg-black border-white/20 mt-1 text-base min-h-[60px]" placeholder="Any special instructions..." /></div>
+              </div>
+
+              {/* Promo Code Section */}
+              <div className="pt-3 border-t border-white/10">
+                <Label className="text-white/80 text-sm flex items-center gap-2 mb-2">
+                  <Ticket className="h-4 w-4 text-gold-500" />
+                  Promo Code
+                </Label>
+                {promoDiscount ? (
+                  <div className="flex items-center justify-between bg-green-500/10 border border-green-500/30 rounded-lg px-3 py-2">
+                    <div>
+                      <span className="text-green-400 font-semibold">{promoDiscount.code}</span>
+                      <span className="text-green-400/60 text-sm ml-2">-Rs {promoDiscount.discount_amount}</span>
+                    </div>
+                    <button type="button" onClick={handleRemovePromo} className="text-white/40 hover:text-red-400">
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex gap-2">
+                    <Input
+                      value={promoCode}
+                      onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                      className="bg-black border-white/20 uppercase font-mono flex-1"
+                      placeholder="Enter code"
+                    />
+                    <Button 
+                      type="button" 
+                      onClick={handleApplyPromo} 
+                      disabled={isValidatingPromo || !promoCode.trim()}
+                      variant="outline" 
+                      className="border-gold-500 text-gold-500 hover:bg-gold-500 hover:text-black"
+                    >
+                      {isValidatingPromo ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Apply'}
+                    </Button>
+                  </div>
+                )}
+              </div>
+
+              {/* Price Breakdown */}
+              <div className="bg-black/50 rounded-lg p-4 space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-white/60">Subtotal</span>
+                  <span className="text-white">Rs {subtotal.toFixed(2)}</span>
+                </div>
+                
+                {promoDiscount && (
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-green-400">Discount ({promoDiscount.code})</span>
+                    <span className="text-green-400">-Rs {discountAmount.toFixed(2)}</span>
+                  </div>
+                )}
+                
+                {serviceCharge > 0 && (
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-white/60">Service Charge</span>
+                    <span className="text-white">Rs {serviceCharge.toFixed(2)}</span>
+                  </div>
+                )}
+                
+                {taxPercentage > 0 && (
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-white/60">{pricingSettings.tax_label || 'Tax'} ({taxPercentage}%)</span>
+                    <span className="text-white">Rs {taxAmount.toFixed(2)}</span>
+                  </div>
+                )}
+                
+                <div className="border-t border-white/10 pt-2 flex items-center justify-between">
+                  <span className="text-white font-semibold">Total</span>
+                  <span className="text-gold-500 font-bold text-lg">Rs {total.toFixed(2)}</span>
+                </div>
               </div>
 
               <div className="flex gap-3 pt-2">
