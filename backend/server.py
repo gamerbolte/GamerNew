@@ -695,6 +695,7 @@ async def create_payment_method(method: PaymentMethod, current_user: dict = Depe
     method_dict = method.model_dump()
     method_dict["id"] = str(uuid.uuid4())
     await db.payment_methods.insert_one(method_dict)
+    method_dict.pop("_id", None)
     return method_dict
 
 @api_router.put("/payment-methods/{method_id}")
