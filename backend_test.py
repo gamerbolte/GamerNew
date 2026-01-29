@@ -4,7 +4,7 @@ from datetime import datetime
 import json
 
 class GameShopNepalAPITester:
-    def __init__(self, base_url="https://today-journal.preview.emergentagent.com"):
+    def __init__(self, base_url="https://shopease-199.preview.emergentagent.com"):
         self.base_url = base_url
         self.token = None
         self.tests_run = 0
