@@ -1004,7 +1004,14 @@ async def delete_blog_post(post_id: str, current_user: dict = Depends(get_curren
 async def get_site_settings():
     settings = await db.site_settings.find_one({"id": "main"})
     if not settings:
-        settings = {"id": "main", "notification_bar_enabled": True, "chat_enabled": True}
+        settings = {
+            "id": "main", 
+            "notification_bar_enabled": True, 
+            "chat_enabled": True,
+            "service_charge": 0,
+            "tax_percentage": 0,
+            "tax_label": "Tax"
+        }
     settings.pop("_id", None)
     return settings
 
@@ -1013,6 +1020,81 @@ async def update_site_settings(settings: dict, current_user: dict = Depends(get_
     settings["id"] = "main"
     await db.site_settings.update_one({"id": "main"}, {"$set": settings}, upsert=True)
     return settings
+
+# ==================== PROMO CODES ====================
+
+@api_router.get("/promo-codes")
+async def get_promo_codes(current_user: dict = Depends(get_current_user)):
+    codes = await db.promo_codes.find().sort("created_at", -1).to_list(100)
+    for c in codes:
+        c.pop("_id", None)
+    return codes
+
+@api_router.post("/promo-codes")
+async def create_promo_code(code_data: PromoCodeCreate, current_user: dict = Depends(get_current_user)):
+    # Check if code already exists
+    existing = await db.promo_codes.find_one({"code": code_data.code.upper()})
+    if existing:
+        raise HTTPException(status_code=400, detail="Promo code already exists")
+    
+    code = PromoCode(
+        code=code_data.code.upper(),
+        discount_type=code_data.discount_type,
+        discount_value=code_data.discount_value,
+        min_order_amount=code_data.min_order_amount,
+        max_uses=code_data.max_uses,
+        is_active=code_data.is_active
+    )
+    await db.promo_codes.insert_one(code.model_dump())
+    result = code.model_dump()
+    result.pop("_id", None)
+    return result
+
+@api_router.put("/promo-codes/{code_id}")
+async def update_promo_code(code_id: str, code_data: PromoCodeCreate, current_user: dict = Depends(get_current_user)):
+    existing = await db.promo_codes.find_one({"id": code_id})
+    if not existing:
+        raise HTTPException(status_code=404, detail="Promo code not found")
+    
+    update_data = code_data.model_dump()
+    update_data["code"] = update_data["code"].upper()
+    await db.promo_codes.update_one({"id": code_id}, {"$set": update_data})
+    updated = await db.promo_codes.find_one({"id": code_id}, {"_id": 0})
+    return updated
+
+@api_router.delete("/promo-codes/{code_id}")
+async def delete_promo_code(code_id: str, current_user: dict = Depends(get_current_user)):
+    result = await db.promo_codes.delete_one({"id": code_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Promo code not found")
+    return {"message": "Promo code deleted"}
+
+@api_router.post("/promo-codes/validate")
+async def validate_promo_code(code: str, subtotal: float):
+    """Validate a promo code and return discount info"""
+    promo = await db.promo_codes.find_one({"code": code.upper(), "is_active": True})
+    if not promo:
+        raise HTTPException(status_code=404, detail="Invalid promo code")
+    
+    if promo.get("min_order_amount", 0) > subtotal:
+        raise HTTPException(status_code=400, detail=f"Minimum order amount is Rs {promo['min_order_amount']}")
+    
+    if promo.get("max_uses") and promo.get("used_count", 0) >= promo["max_uses"]:
+        raise HTTPException(status_code=400, detail="Promo code has reached maximum uses")
+    
+    # Calculate discount
+    if promo["discount_type"] == "percentage":
+        discount = subtotal * (promo["discount_value"] / 100)
+    else:
+        discount = promo["discount_value"]
+    
+    return {
+        "valid": True,
+        "code": promo["code"],
+        "discount_type": promo["discount_type"],
+        "discount_value": promo["discount_value"],
+        "discount_amount": round(discount, 2)
+    }
 
 # ==================== ROOT ====================
 
