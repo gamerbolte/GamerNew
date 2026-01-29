@@ -37,7 +37,7 @@ export default function ProductPage() {
       }
     };
     fetchProduct();
-  }, [productId]);
+  }, [productSlug]);
 
   const currentVariation = product?.variations?.find(v => v.id === selectedVariation);
 
