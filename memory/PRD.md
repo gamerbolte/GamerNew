@@ -10,7 +10,7 @@ GameShop Nepal is a premium e-commerce platform for selling digital products in 
 - **Frontend**: React.js with TailwindCSS, Shadcn UI components
 - **Backend**: FastAPI (Python)
 - **Database**: MongoDB
-- **Integrations**: Take.app for orders/payments, Trustpilot for reviews
+- **Integrations**: Take.app for orders/payments, Trustpilot for reviews (auto-sync)
 
 ## User Personas
 1. **Customers**: Nepal-based users looking for digital products without international payment cards
@@ -41,7 +41,7 @@ GameShop Nepal is a premium e-commerce platform for selling digital products in 
 - [x] Dashboard with stats
 - [x] Categories CRUD
 - [x] Products CRUD with variations, tags, custom fields
-- [x] Reviews CRUD
+- [x] Reviews CRUD with **Trustpilot auto-sync** ✨
 - [x] FAQs CRUD with reordering
 - [x] Static Pages editor (About, Terms)
 - [x] Social Links CRUD
@@ -55,6 +55,15 @@ GameShop Nepal is a premium e-commerce platform for selling digital products in 
 - [x] Image upload
 - [x] Take.app integration (order creation)
 - [x] Seed data endpoint
+- [x] **Trustpilot review sync** (scrapes reviews from gameshopnepal.com Trustpilot page)
+
+### Trustpilot Integration ✨
+- [x] Auto-sync reviews from Trustpilot page
+- [x] Displays reviewer name, star rating, comment, date
+- [x] Reviews show "Trustpilot" badge in admin
+- [x] One-click sync button in admin panel
+- [x] Last sync timestamp tracking
+- [x] Trustpilot script integration key: R2dU6tOWAvxQedL8
 
 ## Prioritized Backlog
 
@@ -62,11 +71,12 @@ GameShop Nepal is a premium e-commerce platform for selling digital products in 
 - [x] Core product listing and ordering flow
 - [x] Admin product management
 - [x] Take.app order integration
+- [x] Trustpilot review auto-sync
 
 ### P1 - High Priority
+- [ ] Scheduled auto-sync (cron job to sync every 6 hours)
 - [ ] Order status tracking/history
 - [ ] Email notifications for orders
-- [ ] WhatsApp direct integration fallback
 
 ### P2 - Nice to Have
 - [ ] Product search with filters
@@ -83,6 +93,8 @@ GameShop Nepal is a premium e-commerce platform for selling digital products in 
 - GET/POST /api/categories
 - GET/POST/PUT/DELETE /api/products
 - GET/POST/PUT/DELETE /api/reviews
+- POST /api/reviews/sync-trustpilot ← **Trustpilot sync**
+- GET /api/reviews/trustpilot-status
 - GET/POST/PUT/DELETE /api/faqs
 - GET/PUT /api/pages/{page_key}
 - GET/POST/PUT/DELETE /api/social-links
@@ -93,7 +105,6 @@ GameShop Nepal is a premium e-commerce platform for selling digital products in 
 - POST /api/seed
 
 ## Next Tasks
-1. Add sample products to showcase the store
-2. Configure Take.app API key for live order processing
-3. Add more payment method logos
-4. Create blog guides for customers
+1. Set up scheduled auto-sync for Trustpilot reviews (every 6 hours)
+2. Add sample products to showcase the store
+3. Configure Take.app API key for live order processing
