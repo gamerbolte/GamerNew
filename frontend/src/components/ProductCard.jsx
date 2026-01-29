@@ -7,10 +7,13 @@ export default function ProductCard({ product }) {
     : 0;
 
   const tags = product.tags || [];
+  
+  // Use slug if available, otherwise fall back to ID
+  const productUrl = product.slug ? `/product/${product.slug}` : `/product/${product.id}`;
 
   return (
     <Link
-      to={`/product/${product.id}`}
+      to={productUrl}
       className="product-card group relative bg-card rounded-lg overflow-hidden hover:ring-1 hover:ring-gold-500/50 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-gold-500/10"
       data-testid={`product-card-${product.id}`}
     >
