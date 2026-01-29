@@ -19,6 +19,8 @@ import AdminTakeApp from "@/pages/admin/AdminTakeApp";
 import AdminPaymentMethods from "@/pages/admin/AdminPaymentMethods";
 import AdminNotificationBar from "@/pages/admin/AdminNotificationBar";
 import AdminBlog from "@/pages/admin/AdminBlog";
+import AdminPromoCodes from "@/pages/admin/AdminPromoCodes";
+import AdminPricingSettings from "@/pages/admin/AdminPricingSettings";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import "@/App.css";
 
@@ -47,6 +49,8 @@ function App() {
           <Route path="/admin/payment-methods" element={<ProtectedRoute><AdminPaymentMethods /></ProtectedRoute>} />
           <Route path="/admin/notification-bar" element={<ProtectedRoute><AdminNotificationBar /></ProtectedRoute>} />
           <Route path="/admin/blog" element={<ProtectedRoute><AdminBlog /></ProtectedRoute>} />
+          <Route path="/admin/promo-codes" element={<ProtectedRoute><AdminPromoCodes /></ProtectedRoute>} />
+          <Route path="/admin/pricing" element={<ProtectedRoute><AdminPricingSettings /></ProtectedRoute>} />
         </Routes>
       </BrowserRouter>
       <Toaster position="top-right" richColors />
