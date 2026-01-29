@@ -13,7 +13,7 @@ export default function ReviewCard({ review }) {
           <Star key={star} className={`h-3 w-3 lg:h-4 lg:w-4 ${star <= review.rating ? 'text-gold-500 fill-gold-500' : 'text-white/20'}`} />
         ))}
       </div>
-      <p className="text-white/80 text-xs lg:text-sm leading-relaxed mb-3 lg:mb-4 line-clamp-2 flex-1">"{review.comment}"</p>
+      <p className="text-white/80 text-xs lg:text-sm leading-relaxed mb-3 lg:mb-4 line-clamp-2 flex-1">&ldquo;{review.comment}&rdquo;</p>
       <div className="flex items-center justify-between mt-auto">
         <span className="font-heading font-semibold text-white text-sm lg:text-base truncate max-w-[120px] lg:max-w-[150px]">{review.reviewer_name}</span>
         <span className="text-white/40 text-[10px] lg:text-xs flex-shrink-0">{formatDate(review.review_date)}</span>

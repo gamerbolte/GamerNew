@@ -42,7 +42,7 @@ export default function FAQPage() {
 
               <div className="mt-12 text-center bg-card/50 border border-white/10 rounded-lg p-8">
                 <h3 className="font-heading text-2xl font-semibold text-white uppercase mb-4">Still Have Questions?</h3>
-                <p className="text-white/60 mb-4">Can't find what you're looking for? Contact our support team.</p>
+                <p className="text-white/60 mb-4">Can&apos;t find what you&apos;re looking for? Contact our support team.</p>
                 <a href="mailto:support@gameshopnepal.com" className="text-gold-500 hover:text-gold-400 font-semibold">support@gameshopnepal.com</a>
               </div>
             </>
