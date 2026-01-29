@@ -166,6 +166,27 @@ class FAQItem(BaseModel):
 class FAQReorderRequest(BaseModel):
     faq_ids: List[str]
 
+# Promo Code Models
+class PromoCodeCreate(BaseModel):
+    code: str
+    discount_type: str = "percentage"  # "percentage" or "fixed"
+    discount_value: float
+    min_order_amount: float = 0
+    max_uses: Optional[int] = None
+    is_active: bool = True
+
+class PromoCode(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    code: str
+    discount_type: str = "percentage"
+    discount_value: float
+    min_order_amount: float = 0
+    max_uses: Optional[int] = None
+    used_count: int = 0
+    is_active: bool = True
+    created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
 # ==================== HELPERS ====================
 
 def hash_password(password: str) -> str:
