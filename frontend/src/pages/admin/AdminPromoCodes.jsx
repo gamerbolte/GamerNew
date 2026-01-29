@@ -150,7 +150,7 @@ export default function AdminPromoCodes() {
         </div>
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="bg-card border-white/10 text-white max-w-md mx-4">
+          <DialogContent className="bg-card border-white/10 text-white max-w-md sm:mx-auto">
             <DialogHeader>
               <DialogTitle className="font-heading text-xl uppercase">
                 {editingCode ? 'Edit Promo Code' : 'Add Promo Code'}

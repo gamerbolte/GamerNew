@@ -81,7 +81,7 @@ export default function AdminSocialLinks() {
         </div>
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="bg-card border-white/10 text-white max-w-md mx-4">
+          <DialogContent className="bg-card border-white/10 text-white max-w-md sm:mx-auto">
             <DialogHeader><DialogTitle className="font-heading text-xl uppercase">{editingLink ? 'Edit Link' : 'Add Link'}</DialogTitle></DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4 lg:space-y-6">
               <div className="space-y-2">

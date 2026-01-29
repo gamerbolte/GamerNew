@@ -72,7 +72,7 @@ export default function AdminPaymentMethods() {
         </div>
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="bg-card border-white/10 text-white max-w-md mx-4">
+          <DialogContent className="bg-card border-white/10 text-white max-w-md sm:mx-auto">
             <DialogHeader><DialogTitle className="font-heading text-xl uppercase">{editingMethod ? 'Edit Payment Method' : 'Add Payment Method'}</DialogTitle></DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4 lg:space-y-6">
               <div className="space-y-2"><Label>Name</Label><Input value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="bg-black border-white/20" placeholder="e.g. eSewa" required /></div>

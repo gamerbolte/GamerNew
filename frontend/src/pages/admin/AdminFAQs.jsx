@@ -86,7 +86,7 @@ export default function AdminFAQs() {
         </div>
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="bg-card border-white/10 text-white max-w-lg mx-4">
+          <DialogContent className="bg-card border-white/10 text-white max-w-lg sm:mx-auto">
             <DialogHeader><DialogTitle className="font-heading text-xl uppercase">{editingFAQ ? 'Edit FAQ' : 'Add FAQ'}</DialogTitle></DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4 lg:space-y-6">
               <div className="space-y-2"><Label>Question</Label><Input value={formData.question} onChange={(e) => setFormData({ ...formData, question: e.target.value })} className="bg-black border-white/20" placeholder="How do I place an order?" required data-testid="faq-question-input" /></div>

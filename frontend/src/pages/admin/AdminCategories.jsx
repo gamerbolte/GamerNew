@@ -76,7 +76,7 @@ export default function AdminCategories() {
         </div>
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="bg-card border-white/10 text-white max-w-md mx-4">
+          <DialogContent className="bg-card border-white/10 text-white max-w-md sm:mx-auto">
             <DialogHeader><DialogTitle className="font-heading text-xl uppercase">{editingCategory ? 'Edit Category' : 'Add Category'}</DialogTitle></DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4 lg:space-y-6">
               <div className="space-y-2"><Label>Category Name</Label><Input value={categoryName} onChange={(e) => setCategoryName(e.target.value)} className="bg-black border-white/20" placeholder="e.g. Gaming, OTT Subscriptions, Software" required data-testid="category-name-input" /></div>

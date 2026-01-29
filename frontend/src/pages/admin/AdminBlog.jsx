@@ -80,7 +80,7 @@ export default function AdminBlog() {
         </div>
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="bg-card border-white/10 text-white max-w-2xl max-h-[90vh] overflow-y-auto mx-4">
+          <DialogContent className="bg-card border-white/10 text-white max-w-2xl max-h-[90vh] overflow-y-auto sm:mx-auto">
             <DialogHeader><DialogTitle className="font-heading text-xl uppercase">{editingPost ? 'Edit Post' : 'Add Post'}</DialogTitle></DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2"><Label>Title</Label><Input value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} className="bg-black border-white/20" placeholder="How to redeem Netflix gift card" required /></div>
