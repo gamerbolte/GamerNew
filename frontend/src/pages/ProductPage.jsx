@@ -14,7 +14,7 @@ import { toast } from 'sonner';
 import { productsAPI, ordersAPI } from '@/lib/api';
 
 export default function ProductPage() {
-  const { productId } = useParams();
+  const { productSlug } = useParams();
   const [product, setProduct] = useState(null);
   const [selectedVariation, setSelectedVariation] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -27,7 +27,7 @@ export default function ProductPage() {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res = await productsAPI.getOne(productId);
+        const res = await productsAPI.getOne(productSlug);
         setProduct(res.data);
         if (res.data.variations?.length > 0) setSelectedVariation(res.data.variations[0].id);
       } catch (error) {
