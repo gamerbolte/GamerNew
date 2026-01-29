@@ -112,15 +112,16 @@ GameShop Nepal is a premium e-commerce platform for selling digital products in 
 - POST /api/seed
 
 ## Recent Changes (Jan 29, 2025)
-### Bug Fix: Order Placement
+### Bug Fix: Order Placement + Take.app Integration
 - **Issue**: Orders were failing with "Take.app API key not configured" error
 - **Root Cause**: Backend required Take.app API key to create orders, but key wasn't configured
-- **Fix**: Made Take.app integration optional with WhatsApp fallback
-  - If Take.app API key is configured: Creates order on Take.app and redirects to their payment page
-  - If not configured: Saves order locally and provides WhatsApp contact link for manual payment processing
+- **Fix**: 
+  1. Added Take.app API key to backend .env
+  2. Fixed payload to omit empty email (Take.app rejects empty string for email)
+  3. Orders now create on Take.app and redirect to Take.app payment page
 - **Files Changed**:
-  - `/app/backend/server.py`: Modified `create_order` endpoint to handle missing API key gracefully
-  - `/app/frontend/src/pages/ProductPage.jsx`: Updated UI to show appropriate messaging based on payment method
+  - `/app/backend/.env`: Added TAKEAPP_API_KEY
+  - `/app/backend/server.py`: Fixed payload to handle optional email correctly
 
 ## Next Tasks
 1. Set up scheduled auto-sync for Trustpilot reviews (every 6 hours)
