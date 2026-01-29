@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Package, FolderOpen, Star, FileText, Share2, LogOut, Home, Menu, X, HelpCircle, Store, Bell, BookOpen, CreditCard } from 'lucide-react';
+import { LayoutDashboard, Package, FolderOpen, Star, FileText, Share2, LogOut, Home, Menu, X, HelpCircle, Store, Bell, BookOpen, CreditCard, Ticket, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const LOGO_URL = "https://customer-assets.emergentagent.com/job_8ec93a6a-4f80-4dde-b760-4bc71482fa44/artifacts/4uqt5osn_Staff.zip%20-%201.png";
@@ -9,6 +9,8 @@ const navItems = [
   { path: '/admin', label: 'Dashboard', icon: LayoutDashboard },
   { path: '/admin/categories', label: 'Categories', icon: FolderOpen },
   { path: '/admin/products', label: 'Products', icon: Package },
+  { path: '/admin/promo-codes', label: 'Promo Codes', icon: Ticket },
+  { path: '/admin/pricing', label: 'Pricing Settings', icon: Settings },
   { path: '/admin/reviews', label: 'Reviews', icon: Star },
   { path: '/admin/faqs', label: 'FAQs', icon: HelpCircle },
   { path: '/admin/pages', label: 'Pages', icon: FileText },
