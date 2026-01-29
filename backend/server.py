@@ -331,6 +331,7 @@ async def create_product(product_data: ProductCreate, current_user: dict = Depen
 
     product_dict = product_data.model_dump()
     product_dict["sort_order"] = next_order
+    product_dict["slug"] = generate_slug(product_data.name)
     product = Product(**product_dict)
     await db.products.insert_one(product.model_dump())
     return product
@@ -342,6 +343,7 @@ async def update_product(product_id: str, product_data: ProductCreate, current_u
         raise HTTPException(status_code=404, detail="Product not found")
 
     update_data = product_data.model_dump()
+    update_data["slug"] = generate_slug(product_data.name)
     await db.products.update_one({"id": product_id}, {"$set": update_data})
     updated = await db.products.find_one({"id": product_id}, {"_id": 0})
     return updated
