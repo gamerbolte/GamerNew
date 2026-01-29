@@ -838,15 +838,15 @@ async def create_order(order_data: CreateOrderRequest):
 
     # Generate WhatsApp contact URL as fallback when Take.app is not configured
     whatsapp_number = "9779743488871"  # GameShop Nepal WhatsApp
-    whatsapp_message = f"Hi! I'd like to place an order:\n\n{items_text}\n\nTotal: Rs {total_amount_rupees}\n\nName: {order_data.customer_name}\nPhone: {order_data.customer_phone}"
-    if order_data.remark:
-        whatsapp_message += f"\nNote: {order_data.remark}"
-    
-    whatsapp_url = f"https://wa.me/{whatsapp_number}?text={httpx.URL(whatsapp_message).path}"
     
     # Use WhatsApp URL as fallback payment method if Take.app is not available
     if not payment_url:
-        payment_url = f"https://wa.me/{whatsapp_number}?text=" + full_remark.replace(" ", "%20").replace("\n", "%0A")
+        import urllib.parse
+        whatsapp_message = f"Hi! I'd like to place an order:\n\n{items_text}\n\nTotal: Rs {total_amount_rupees}\n\nName: {order_data.customer_name}\nPhone: {order_data.customer_phone}"
+        if order_data.remark:
+            whatsapp_message += f"\nNote: {order_data.remark}"
+        encoded_message = urllib.parse.quote(whatsapp_message)
+        payment_url = f"https://wa.me/{whatsapp_number}?text={encoded_message}"
 
     local_order = {
         "id": order_id,
