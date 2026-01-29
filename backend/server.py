@@ -458,11 +458,15 @@ async def fetch_trustpilot_reviews_from_page():
                         
                         for review in review_list:
                             consumer = review.get("consumer", {})
+                            # Get the published date from dates object
+                            dates = review.get("dates", {})
+                            published_date = dates.get("publishedDate") or dates.get("experiencedDate")
+                            
                             reviews.append({
                                 "reviewer_name": consumer.get("displayName", "Anonymous"),
                                 "rating": review.get("rating", 5),
                                 "comment": review.get("text", review.get("title", "")),
-                                "review_date": review.get("createdAt", datetime.now(timezone.utc).isoformat())
+                                "review_date": published_date or datetime.now(timezone.utc).isoformat()
                             })
                     except json.JSONDecodeError:
                         continue
