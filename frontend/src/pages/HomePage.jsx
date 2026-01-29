@@ -113,8 +113,8 @@ export default function HomePage() {
           ) : reviews.length > 0 ? (
             <div className="reviews-marquee-container">
               <div className="reviews-marquee">
-                {reviews.map((review) => <div key={review.id} className="review-slide"><ReviewCard review={review} /></div>)}
-                {reviews.map((review) => <div key={`dup-${review.id}`} className="review-slide"><ReviewCard review={review} /></div>)}
+                {reviews.slice(0, 5).map((review) => <div key={review.id} className="review-slide"><ReviewCard review={review} /></div>)}
+                {reviews.slice(0, 5).map((review) => <div key={`dup-${review.id}`} className="review-slide"><ReviewCard review={review} /></div>)}
               </div>
             </div>
           ) : <div className="text-center py-6 text-white/40">No reviews yet</div>}
