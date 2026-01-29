@@ -61,6 +61,8 @@ export const reviewsAPI = {
   create: (data) => api.post('/reviews', data),
   update: (id, data) => api.put(`/reviews/${id}`, data),
   delete: (id) => api.delete(`/reviews/${id}`),
+  syncTrustpilot: () => api.post('/reviews/sync-trustpilot'),
+  getTrustpilotStatus: () => api.get('/reviews/trustpilot-status'),
 };
 
 export const faqsAPI = {
