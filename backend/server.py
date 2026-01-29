@@ -92,6 +92,7 @@ class Product(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     name: str
+    slug: Optional[str] = None
     description: str
     image_url: str
     category_id: str
