@@ -360,11 +360,22 @@ export default function ProductPage() {
               <div className="text-center">
                 <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4"><Check className="h-8 w-8 text-green-500" /></div>
                 <h3 className="text-lg font-semibold text-white mb-2">Order Created!</h3>
-                <p className="text-white/60 text-sm">Click the button below to complete your payment on Take.app</p>
+                <p className="text-white/60 text-sm">
+                  {orderData?.takeapp_order_id 
+                    ? 'Click the button below to complete your payment on Take.app'
+                    : 'Click the button below to contact us via WhatsApp to complete your order'}
+                </p>
               </div>
               <div className="bg-black/50 rounded-lg p-3 space-y-2"><div><p className="text-white/60 text-xs mb-1">Order ID:</p><p className="text-white font-mono text-sm truncate">{orderData?.takeapp_order_id || orderData?.order_id}</p></div></div>
-              <Button onClick={handleOpenPayment} className="w-full bg-gold-500 hover:bg-gold-600 text-black"><ExternalLink className="mr-2 h-4 w-4" />Complete Payment on Take.app</Button>
-              <p className="text-white/40 text-xs text-center">You will be redirected to Take.app to complete your payment and upload proof.</p>
+              <Button onClick={handleOpenPayment} className="w-full bg-gold-500 hover:bg-gold-600 text-black" data-testid="complete-payment-btn">
+                <ExternalLink className="mr-2 h-4 w-4" />
+                {orderData?.takeapp_order_id ? 'Complete Payment on Take.app' : 'Contact via WhatsApp'}
+              </Button>
+              <p className="text-white/40 text-xs text-center">
+                {orderData?.takeapp_order_id 
+                  ? 'You will be redirected to Take.app to complete your payment and upload proof.'
+                  : 'You will be redirected to WhatsApp to complete your order.'}
+              </p>
               <Button variant="ghost" onClick={handleCloseDialog} className="w-full text-white/60">Close</Button>
             </div>
           )}
