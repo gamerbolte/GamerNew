@@ -802,6 +802,7 @@ async def create_order(order_data: CreateOrderRequest):
     takeapp_order_number = None
     payment_url = None
 
+    # Try Take.app integration if API key is configured
     if TAKEAPP_API_KEY:
         try:
             async with httpx.AsyncClient() as client:
@@ -829,15 +830,23 @@ async def create_order(order_data: CreateOrderRequest):
                     takeapp_order_number = takeapp_result.get("number")
                     payment_url = f"https://take.app/{TAKEAPP_STORE_ALIAS}/orders/{takeapp_order_id}/pay"
                 else:
-                    logger.error(f"Take.app order creation failed: {response.status_code} - {response.text}")
-                    raise HTTPException(status_code=500, detail="Failed to create order on Take.app")
-        except HTTPException:
-            raise
+                    logger.warning(f"Take.app order creation failed: {response.status_code} - {response.text}")
+                    # Continue without Take.app - order will be saved locally
         except Exception as e:
-            logger.error(f"Failed to create order on Take.app: {e}")
-            raise HTTPException(status_code=500, detail=f"Failed to create order: {str(e)}")
-    else:
-        raise HTTPException(status_code=500, detail="Take.app API key not configured")
+            logger.warning(f"Take.app integration failed, saving order locally: {e}")
+            # Continue without Take.app - order will be saved locally
+
+    # Generate WhatsApp contact URL as fallback when Take.app is not configured
+    whatsapp_number = "9779743488871"  # GameShop Nepal WhatsApp
+    whatsapp_message = f"Hi! I'd like to place an order:\n\n{items_text}\n\nTotal: Rs {total_amount_rupees}\n\nName: {order_data.customer_name}\nPhone: {order_data.customer_phone}"
+    if order_data.remark:
+        whatsapp_message += f"\nNote: {order_data.remark}"
+    
+    whatsapp_url = f"https://wa.me/{whatsapp_number}?text={httpx.URL(whatsapp_message).path}"
+    
+    # Use WhatsApp URL as fallback payment method if Take.app is not available
+    if not payment_url:
+        payment_url = f"https://wa.me/{whatsapp_number}?text=" + full_remark.replace(" ", "%20").replace("\n", "%0A")
 
     local_order = {
         "id": order_id,
@@ -858,13 +867,19 @@ async def create_order(order_data: CreateOrderRequest):
 
     await db.orders.insert_one(local_order)
 
+    message = "Order created successfully"
+    if takeapp_order_id:
+        message += " on Take.app"
+    else:
+        message += ". Contact us via WhatsApp to complete payment."
+
     return {
         "success": True,
         "order_id": order_id,
         "takeapp_order_id": takeapp_order_id,
         "takeapp_order_number": takeapp_order_number,
         "payment_url": payment_url,
-        "message": "Order created successfully on Take.app"
+        "message": message
     }
 
 @api_router.get("/orders")
