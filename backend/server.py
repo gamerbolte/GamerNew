@@ -809,10 +809,12 @@ async def create_order(order_data: CreateOrderRequest):
                 takeapp_payload = {
                     "customer_name": order_data.customer_name,
                     "customer_phone": formatted_phone,
-                    "customer_email": order_data.customer_email or "",
                     "total_amount": total_amount_rupees,
                     "remark": full_remark
                 }
+                # Only include email if provided
+                if order_data.customer_email:
+                    takeapp_payload["customer_email"] = order_data.customer_email
 
                 logger.info(f"Creating Take.app order: {takeapp_payload}")
 
