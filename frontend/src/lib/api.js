@@ -107,6 +107,14 @@ export const ordersAPI = {
     api.post(`/orders/${orderId}/payment-screenshot`, { screenshot_url: screenshotUrl }),
 };
 
+export const promoCodesAPI = {
+  getAll: () => api.get('/promo-codes'),
+  create: (data) => api.post('/promo-codes', data),
+  update: (id, data) => api.put(`/promo-codes/${id}`, data),
+  delete: (id) => api.delete(`/promo-codes/${id}`),
+  validate: (code, subtotal) => api.post(`/promo-codes/validate?code=${encodeURIComponent(code)}&subtotal=${subtotal}`),
+};
+
 export const contactsAPI = {
   getAll: () => api.get('/contacts'),
   getAllAdmin: () => api.get('/contacts/all'),
