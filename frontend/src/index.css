@@ -212,8 +212,14 @@
 .reviews-marquee {
     display: flex;
     gap: 1rem;
-    animation: marquee 30s linear infinite;
+    animation: marquee 60s linear infinite;
     width: max-content;
+}
+
+@media (max-width: 768px) {
+    .reviews-marquee {
+        animation: marquee 80s linear infinite;
+    }
 }
 
 .reviews-marquee:hover {
